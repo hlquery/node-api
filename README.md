@@ -20,41 +20,6 @@ A sophisticated, modular Node.js client library for hlquery, designed with a fam
 -  **Professional Structure**: Well-organized and modular architecture
 -  **Async/Await Support**: Modern async/await syntax throughout
 
-## Directory Structure
-
-```
-node/
-├── index.js                  # Main entry point
-├── example.js                # Main example file
-├── README.md                 # This file
-├── STRUCTURE.md              # Architecture documentation
-├── LICENSE                   # BSD-3-Clause license
-├── package.json              # npm package definition
-│
-├── lib/                      # Core library classes
-│   ├── Client.js            # Main client class
-│   ├── Request.js           # HTTP request handler
-│   ├── Response.js          # Response wrapper
-│   ├── Exceptions.js        # Custom exceptions
-│   ├── Collections.js       # Collections API
-│   ├── Documents.js         # Documents API
-│   └── Search.js            # Search API
-│
-├── utils/                    # Utility classes
-│   ├── Auth.js              # Authentication utilities
-│   ├── Config.js            # Configuration utilities
-│   └── Validator.js         # Input validation
-│
-├── examples/                 # Organized examples
-│   ├── basic_usage.js       # Basic usage examples
-│   ├── search.js   # Search examples
-│   ├── collections.js  # Collection management
-│   └── documents.js    # Document CRUD
-│
-├── tests/                    # Test files (for future use)
-└── config/                   # Configuration files (for future use)
-```
-
 ## Installation
 
 Core client usage has no external dependencies. PDF parsing uses the optional `pdf-parse` package.
