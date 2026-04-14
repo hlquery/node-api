@@ -2,10 +2,18 @@
   <img src="https://docs.hlquery.com/img/hlquery/2.png" alt="hlquery logo" width="200">
 </div>
 
+<div align="center">
 
-# hlquery Node.js API Client
+**A sophisticated, modular Node.js client library for hlquery, designed with a familiar and intuitive API structure.**
 
-A sophisticated, modular Node.js client library for hlquery, designed with a familiar and intuitive API structure.
+[![Twitter Follow](https://img.shields.io/twitter/url/https/x.com/hlquery.svg?style=social&label=Follow%20%40hlquery)](https://x.com/hlquery)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/node-api)](https://github.com/hlquery/node-api/pulse)
+[![GitHub stars](https://img.shields.io/github/stars/hlquery/node-api?style=social)](https://github.com/hlquery/node-api/stargazers)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+[Documentation](https://docs.hlquery.com) • [hlquery](https://github.com/hlquery/hlquery) • [Discord](https://discord.hlquery.com)
+
+</div>
 
 ## Features
 
@@ -83,6 +91,19 @@ client.setAuthToken('your_token_here', 'bearer');
 
 // Method 3: Use X-API-Key
 client.setAuthToken('your_token_here', 'api-key');
+```
+
+### Reduce Text Example
+
+If the `ai_search` module is enabled, you can use the raw request helper to ask hlquery to summarize a stored document:
+
+```javascript
+const summary = await client.executeRequest('GET', '/modules/ai_search/talk', null, {
+    q: 'summarize onboarding guide in docs',
+    run: 'true'
+});
+
+console.log(summary.getBody());
 ```
 
 ## Architecture
@@ -292,49 +313,6 @@ The generated document includes:
 
 CSV parsing uses no external dependency. Cells are flattened into plain text, and commas are replaced with spaces before indexing to satisfy hlquery field restrictions.
 
-#### Field Value Character Restrictions
-
-**Important**: String field values have character restrictions:
-
-**❌ Invalid Characters** (not allowed):
-- Commas (`,`) - Reserved for internal parsing
-
-** Valid Characters** (allowed):
-- Letters, numbers, underscores (`_`), hyphens (`-`), spaces, periods, and most punctuation (except commas)
-
-**Examples:**
-
- **Valid:**
-```javascript
-const doc = {
-  id: 'doc1',
-  tags: 'tag1_tag2_tag3',        //  Use underscores
-  cast: 'Actor1_Actor2',          //  Use underscores
-  genre: 'Action_Drama'            //  Use underscores
-};
-
-// Or use arrays for multiple values:
-const doc2 = {
-  id: 'doc2',
-  tags: ['tag1', 'tag2', 'tag3']  //  Arrays are fine
-};
-```
-
-❌ **Invalid:**
-```javascript
-const doc = {
-  id: 'doc1',
-  tags: 'tag1,tag2,tag3',         // ❌ Commas not allowed
-  cast: 'Actor1, Actor2',         // ❌ Commas not allowed
-  genre: 'Action,Drama'           // ❌ Commas not allowed
-};
-```
-
-**Workarounds:**
-- Use underscores (`_`) or spaces instead of commas
-- Use arrays for multiple values: `tags: ['tag1', 'tag2', 'tag3']`
-- Use separate fields if you need comma-separated data
-
 #### Convenience Methods
 
 ```javascript
@@ -520,37 +498,6 @@ try {
 }
 ```
 
-## Examples
-
-### Complete Example
-
-See `example.js` for a complete example demonstrating:
-- Health checks
-- Authentication (with and without token)
-- Listing collections
-- Getting collection fields
-- Listing documents with pagination
-- Multiple search methods
-- Dynamic authentication
-
-Run the example:
-
-```bash
-# Without authentication
-node example.js
-
-# With authentication
-node example.js your_token_here
-```
-
-### Organized Examples
-
-Check the `examples/` directory for organized examples:
-- `basic_usage.js` - Basic operations
-- `search.js` - Search patterns
-- `collections.js` - Collection management
-- `documents.js` - Document CRUD
-
 
 ## Requirements
 
@@ -575,20 +522,3 @@ Or add to your `package.json`:
 }
 ```
 
-## Architecture
-
-For detailed information about the library architecture, design decisions, and internal structure, see [STRUCTURE.md](STRUCTURE.md).
-
-## License
-
-Copyright (C) 2021-2026, Carlos F. Ferry <carlos.ferry@gmail.com>
-
-This software is licensed under the BSD-3-Clause License. See the [LICENSE](LICENSE) file for details.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
