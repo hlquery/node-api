@@ -22,6 +22,7 @@
 -  **Authentication Support**: Bearer token and X-API-Key authentication
 -  **Flexible Parameters**: Support for multiple parameter formats
 -  **Auto-detection**: Automatically detects searchable fields when not specified
+-  **SQL Support**: Collection-bound SQL selects and top-level `/sql` execution
 -  **Type-safe Responses**: Response objects with helper methods
 -  **Comprehensive Validation**: Input validation for all operations
 -  **No External Dependencies**: Uses Node.js built-in `http` and `https` modules
@@ -359,6 +360,57 @@ const results = await client.search('collection', {
     query_by: 'title,content',
     limit: 10
 });
+```
+
+### SQL
+
+Quick SQL example:
+
+```javascript
+const Client = require('hlquery-node-client');
+
+async function main() {
+    const client = new Client('http://localhost:9200');
+
+    const response = await client.sqlSearch(
+        'products',
+        'SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;'
+    );
+
+    if (!response.isSuccess()) {
+        console.error(response.getError());
+        return;
+    }
+
+    const body = response.getBody();
+    console.log(body.rows || []);
+}
+
+main().catch(console.error);
+```
+
+Basic SQL example:
+
+```javascript
+const results = await client.sqlSearch(
+    'products',
+    'SELECT id, title FROM products ORDER BY title ASC LIMIT 3;'
+);
+
+if (results.isSuccess()) {
+    const body = results.getBody();
+    console.log(body.rows || []);
+}
+```
+
+Top-level SQL execution:
+
+```javascript
+const rows = await client.sql('SHOW COLLECTIONS;');
+
+const insert = await client.execSql(
+    "INSERT INTO products (id, title, price) VALUES ('sku-9', 'Camp Stove', 89);"
+);
 ```
 
 #### Search Management APIs
