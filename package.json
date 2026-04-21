@@ -7,6 +7,7 @@
   "scripts": {
     "test": "node ../tests/test_node_client_conformance.js",
     "test:conformance": "node ../tests/test_node_client_conformance.js",
+    "test:offline": "node test/offline-smoke.js",
     "example": "node example.js",
     "example:pdf": "node examples/pdf.js",
     "example:csv": "node examples/csv.js"
