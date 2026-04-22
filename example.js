@@ -23,7 +23,7 @@
 const Client = require('./lib/Client');
 
 // Configuration
-const baseUrl = 'http://localhost:9200';
+const baseUrl = process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200';
 
 // Parse command line arguments
 let command = 'all';

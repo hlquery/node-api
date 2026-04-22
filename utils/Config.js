@@ -10,12 +10,16 @@
  * Configuration management utilities
  */
 class Config {
+    static getDefaultBaseUrl() {
+        return process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200';
+    }
+
     /**
      * Merge options with defaults
      */
     static mergeDefaults(options = {}) {
         return {
-            base_url: options.base_url || 'http://localhost:9200',
+            base_url: options.base_url || Config.getDefaultBaseUrl(),
             timeout: options.timeout || 30000,
             token: options.token || null,
             auth_method: options.auth_method || 'bearer',
@@ -28,7 +32,7 @@ class Config {
      */
     static normalizeUrl(url) {
         if (!url) {
-            return 'http://localhost:9200';
+            return Config.getDefaultBaseUrl();
         }
         url = url.trim();
         if (!url.startsWith('http://') && !url.startsWith('https://')) {

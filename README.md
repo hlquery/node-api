@@ -63,7 +63,7 @@ CSV support is built in and does not require any extra package.
 const Client = require('./lib/Client');
 
 // Initialize client
-const client = new Client('http://localhost:9200');
+const client = new Client(process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200');
 
 // Health check
 const health = await client.health();
