@@ -13,7 +13,7 @@
 
 </div>
 
-# hlquery Node.js API Client
+### hlquery Node.js API Client
 
 ### Installation
 
@@ -299,18 +299,3 @@ try {
   }
 }
 ```
-
-### Requirements
-
-- Node.js >= 12.0.0
-- No external dependencies required for core client usage
-
-### Features
-
-- Modular classes for collections, documents, search, aliases, overrides, synonyms, stopwords, and system APIs.
-- Bearer token and X-API-Key authentication.
-- Flexible parameter formats.
-- Automatic searchable-field detection when fields are not specified.
-- SQL helpers for collection-bound and top-level SQL execution.
-- Response wrapper with status, body, and error helpers.
-- Built-in validation and async/await support.
