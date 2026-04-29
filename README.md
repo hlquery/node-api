@@ -13,8 +13,6 @@
 
 </div>
 
-### hlquery Node.js API Client
-
 ### Installation
 
 Core client usage has no external dependencies. CSV support is built in.
@@ -277,25 +275,3 @@ response.getError();
 response.toArray();
 ```
 
-### Errors
-
-```javascript
-const { RequestException, AuthenticationException, ValidationException } = require('./lib/Exceptions');
-
-try {
-  const result = await client.searchApi().search('books', { q: 'test' });
-  if (result.isError()) {
-    console.log(result.getError());
-  }
-} catch (error) {
-  if (error instanceof RequestException) {
-    console.log('request failed:', error.message, error.statusCode);
-  } else if (error instanceof AuthenticationException) {
-    console.log('auth failed:', error.message);
-  } else if (error instanceof ValidationException) {
-    console.log('validation failed:', error.message);
-  } else {
-    throw error;
-  }
-}
-```
