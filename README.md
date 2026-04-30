@@ -219,6 +219,14 @@ await client.sql('SHOW COLLECTIONS;');
 await client.execSql("INSERT INTO products (id, title) VALUES ('sku-9', 'Camp Stove');");
 ```
 
+Dedicated SQL example:
+
+```bash
+node examples/sql.js
+# or
+npm run example:sql
+```
+
 Talk shell example:
 
 ```text
@@ -274,4 +282,3 @@ response.isError();
 response.getError();
 response.toArray();
 ```
-

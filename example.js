@@ -14,6 +14,7 @@
  *   Commands:
  *     cols   - Run collections API examples
  *     docs   - Run documents API examples
+ *     sql    - Run SQL API examples
  *     open   - List and open collections (interactive)
  *     status - Show server health and status information
  *     help   - Show this help message
@@ -34,7 +35,7 @@ let collectionName = null;
 
 if (process.argv.length > 2) {
     const firstArg = process.argv[2];
-    if (['cols', 'docs', 'open', 'status', 'help', 'all'].includes(firstArg)) {
+    if (['cols', 'docs', 'sql', 'open', 'status', 'help', 'all'].includes(firstArg)) {
         command = firstArg;
         // Parse pagination for cols command: cols [offset] [limit] [token]
         if (command === 'cols' && process.argv.length >= 4) {
@@ -84,6 +85,7 @@ if (command === 'help') {
     console.log('  docs   - Run documents API examples');
     console.log('          Usage: docs [collection_name] [token]');
     console.log('          Example: docs my_collection');
+    console.log('  sql    - Run SQL API examples');
     console.log('  open   - List and open collections (interactive)');
     console.log('  status - Show server health and status information');
     console.log('  help   - Show this help message');
@@ -221,6 +223,34 @@ async function main() {
         process.exit(0);
     }
     
+    // ----------------------------------------------------------------====================================
+    // SQL API
+    // ----------------------------------------------------------------====================================
+    if (command === 'all' || command === 'sql') {
+        console.log('\n' + '#'.repeat(70));
+        console.log('# SQL API');
+        console.log('#'.repeat(70) + '\n');
+
+        try {
+            // GET /sql
+            printResult('GET /sql (SHOW COLLECTIONS)', await client.sql('SHOW COLLECTIONS;'));
+
+            // Collection-bound SQL SELECT through /collections/{name}/documents/search
+            const sqlCollection = await getFirstCollection(client);
+            if (!sqlCollection) {
+                console.log('No collections available - skipping collection-bound SQL test\n');
+            } else {
+                const query = `SELECT id FROM ${sqlCollection} LIMIT 5;`;
+                printResult(
+                    'GET /collections/{name}/documents/search (SQL SELECT)',
+                    await client.sqlSearch(sqlCollection, query)
+                );
+            }
+        } catch (error) {
+            console.log(`Error in SQL API: ${error.message}\n`);
+        }
+    }
+
     // ----------------------------------------------------------------====================================
     // System APIs (only for 'all' command)
     // ----------------------------------------------------------------====================================
@@ -621,6 +651,7 @@ async function main() {
         console.log('    docs   - Run documents API examples');
         console.log('             Usage: docs [collection_name] [token]');
         console.log('             Example: docs my_collection');
+        console.log('    sql    - Run SQL API examples');
         console.log('    open   - List and open collections');
         console.log('    status - Show server health and status information');
         console.log('    help   - Show help message');
