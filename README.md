@@ -68,6 +68,39 @@ const results = await client.searchApi().search('books', {
 console.log(results.getBody());
 ```
 
+### Example API Responses
+
+Captured from a local `http://localhost:9200` server.
+
+`client.system().health().getBody()`:
+
+```json
+{
+  "server": "hlquery",
+  "status": "ok",
+  "version": "1.0"
+}
+```
+
+`client.searchApi().search('readme_demo', { q: 'search', query_by: 'title,content', limit: 10 }).getBody()`:
+
+```json
+{
+  "hits": [
+    {
+      "document": {
+        "id": "doc-2",
+        "title": "Search Engineering Notes"
+      },
+      "highlights": {
+        "title": "<em>Search</em> Engineering Notes"
+      }
+    }
+  ],
+  "found": 1
+}
+```
+
 You can also set authentication later:
 
 ```javascript
