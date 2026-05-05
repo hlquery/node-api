@@ -67,112 +67,19 @@ const results = await client.searchApi().search('books', {
   limit: 10
 });
 console.log(results.getBody());
-```
 
-### Example API Responses
-
-Captured from a local `http://localhost:9200` server.
-
-`client.system().health().getBody()`:
-
-```json
-{
-  "server": "hlquery",
-  "status": "ok",
-  "version": "1.0"
-}
-```
-
-`client.searchApi().search('readme_demo', { q: 'search', query_by: 'title,content', limit: 10 }).getBody()`:
-
-```json
-{
-  "hits": [
-    {
-      "document": {
-        "id": "doc-2",
-        "title": "Search Engineering Notes"
-      },
-      "highlights": {
-        "title": "<em>Search</em> Engineering Notes"
-      }
-    }
-  ],
-  "found": 1
-}
-```
-
-You can also set authentication later:
-
-```javascript
-client.setAuthToken('your_token_here', 'bearer');
-client.setAuthToken('your_api_key_here', 'api-key');
-```
-
-### API Surface
-
-Use nested API objects: `client -> resource -> action`, for example `client.collections().create(...)`.
-
-```javascript
-client.system().health();
-client.system().stats();
-client.system().info();
-client.system().status();
-client.system().metrics();
-client.system().connections();
-client.system().rocksdb();
-
-client.collections().list(offset, limit);
-client.collections().get(name);
-client.collections().create(name, schema);
-client.collections().update(name, schema);
-client.collections().delete(name);
-client.collections().getFields(name);
-
-client.documents().list(collection, params);
-client.documents().get(collection, id);
-client.documents().add(collection, document);
-client.documents().update(collection, id, document);
-client.documents().delete(collection, id);
-client.documents().import(collection, documents);
-client.documents().export(collection, params);
-client.documents().facetCounts(collection, params);
-client.documents().addCSV(collection, filePath, options);
-
-client.searchApi().search(collection, params);
-client.searchApi().vectorSearch(collection, params);
-client.searchApi().multiSearch(searches);
-client.searchApi().globalSearch(params);
-client.searchApi().sql(collection, sql);
-
-client.aliases().create(name, params);
-client.aliases().update(name, params);
-client.aliases().delete(name);
-client.synonyms().create(collection, id, synonym);
-client.stopwords().create(collection, params);
-client.overrides().create(collection, id, override);
-client.keys().create(params);
-client.executeRequest(method, path, body, query);
-```
-
-### Collections
-
-```javascript
-const collections = client.collections();
-
-await collections.create('books', {
-  fields: [
-    { name: 'title', type: 'string' },
-    { name: 'content', type: 'string' },
-    { name: 'category', type: 'string', facet: true }
-  ]
+const sam = client.sam();
+const samStatus = await sam.status('books');
+const samHistory = await sam.history('books', 5);
+const samResults = await sam.search('books', 'distributed systems', {
+  limit: 10
 });
 
-await collections.get('books');
-await collections.getFields('books');
-await collections.update('books', schema);
-await collections.delete('books');
+console.log(samStatus.getBody());
+console.log(samHistory.getBody());
+console.log(samResults.getBody());
 ```
+
 
 ### Documents
 
@@ -227,6 +134,22 @@ await search.vectorSearch('books', {
 });
 ```
 
+### SAM
+
+```javascript
+const sam = client.sam();
+
+const status = await sam.status('music');
+const history = await sam.history('music', 5);
+const results = await sam.search('music', 'queen of pop', {
+  limit: 10
+});
+
+console.log(status.getBody());
+console.log(history.getBody());
+console.log(results.getBody());
+```
+
 Common search parameters:
 
 - `q`: query string, including field clauses, phrases, boolean operators, and wildcards.
@@ -252,4 +175,3 @@ const rows = response.getBody().rows || [];
 await client.sql('SHOW COLLECTIONS;');
 await client.execSql("INSERT INTO products (id, title) VALUES ('sku-9', 'Camp Stove');");
 ```
-

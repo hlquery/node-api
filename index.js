@@ -24,6 +24,7 @@ module.exports.Overrides = require('./lib/Overrides');
 module.exports.Synonyms = require('./lib/Synonyms');
 module.exports.Stopwords = require('./lib/Stopwords');
 module.exports.System = require('./lib/System');
+module.exports.SAM = require('./lib/SAM');
 
 // Export exceptions
 module.exports.Exceptions = require('./lib/Exceptions');
