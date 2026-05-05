@@ -8,7 +8,8 @@
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/node-api)](https://github.com/hlquery/node-api/pulse)
-[![node-api](https://img.shields.io/badge/GitHub-node--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
+[![node-api](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -252,66 +253,3 @@ await client.sql('SHOW COLLECTIONS;');
 await client.execSql("INSERT INTO products (id, title) VALUES ('sku-9', 'Camp Stove');");
 ```
 
-Dedicated SQL example:
-
-```bash
-node examples/sql.js
-# or
-npm run example:sql
-```
-
-Talk shell example:
-
-```text
-localhost:9200> sql: select title,id from music LIMIT 2;
-
-SQL rows for `select title,id from music LIMIT 2;`:
-+--------------------------------+------------------------------------------+
-| id                             | title                                    |
-+--------------------------------+------------------------------------------+
-| music_artist-profile-beyonce   | Artist Profile: Beyonce                  |
-| music_artist-profile-kendrick- | Artist Profile: Kendrick Lamar           |
-| lamar                          |                                          |
-+--------------------------------+------------------------------------------+
-2 results shown.
-Search completed in 19 ms.
-```
-
-### Search Management
-
-```javascript
-const aliases = client.aliases();
-const synonyms = client.synonyms();
-const stopwords = client.stopwords();
-const overrides = client.overrides();
-
-await aliases.create('books_current', { collection_name: 'books_v2' });
-
-await synonyms.create('books', 'cars', {
-  root: 'car',
-  synonyms: ['auto', 'automobile']
-});
-
-await stopwords.create('books', { word: 'the' });
-
-await overrides.create('books', 'boost_featured', {
-  rule: { query: 'featured', match: 'exact' },
-  includes: [{ id: 'doc-1', position: 1 }],
-  excludes: []
-});
-```
-
-### Responses
-
-All API methods return a `Response` object.
-
-```javascript
-const response = await client.system().health();
-
-response.getStatusCode();
-response.getBody();
-response.isSuccess();
-response.isError();
-response.getError();
-response.toArray();
-```
