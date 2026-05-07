@@ -4,29 +4,42 @@
 
 <div align="center">
 
-**A modular Node.js client library for hlquery.**
+**A modular Node.js client library for hlquery, designed with a familiar and intuitive API structure.**
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/node-api)](https://github.com/hlquery/node-api/pulse)
-[![node-api](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
-[![GitHub](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-node--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
+[![hlquery](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
 
-### Installation
+### What is the hlquery Node.js API?
 
-Core client usage has no external dependencies. CSV support is built in.
+The hlquery Node.js API is the official Node.js client for hlquery. It wraps the REST interface in a modular service-style client with helpers for collections, documents, search, SQL, and SAM.
+
+It is a good fit for backend services, scripts, dashboards, and apps that want hlquery integration without repeating request code.
+
+### Why use it?
+
+- Familiar modular layout such as `client.collections()`, `client.documents()`, and `client.sam()`.
+- Consistent auth, params, and parsed responses.
+- Good default coverage for common hlquery workflows.
+- Raw request access for custom routes.
+
+### Why choose it over raw HTTP?
+
+- Less repetitive fetch or axios boilerplate.
+- Cleaner handling for auth headers and endpoint paths.
+- Easier to keep search and indexing code readable.
+
+### Install
 
 ```bash
 npm install hlquery-node-client
 ```
 
-```javascript
-const Client = require('hlquery-node-client');
-```
-
-For local development in this repository:
+For local development inside this repository:
 
 ```javascript
 const Client = require('./lib/Client');
@@ -37,9 +50,9 @@ const Client = require('./lib/Client');
 ```javascript
 const Client = require('hlquery-node-client');
 
-const client = new Client(process.env.HLQ_BASE_URL || 'http://localhost:9200', {
+const client = new Client(process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200', {
   token: process.env.HLQ_TOKEN,
-  auth_method: 'bearer' // or 'api-key'
+  auth_method: 'bearer'
 });
 
 const health = await client.system().health();
@@ -47,101 +60,30 @@ console.log('status:', health.getStatusCode());
 
 const collections = await client.collections().list(0, 10);
 console.log(collections.getBody());
-
-await client.collections().create('books', {
-  fields: [
-    { name: 'title', type: 'string' },
-    { name: 'content', type: 'string' }
-  ]
-});
-
-await client.documents().add('books', {
-  id: 'book-1',
-  title: 'Designing Data-Intensive Applications',
-  content: 'Distributed systems, data models, replication, and indexing.'
-});
-
-const results = await client.searchApi().search('books', {
-  q: 'distributed systems',
-  query_by: 'title,content',
-  limit: 10
-});
-console.log(results.getBody());
-
-const sam = client.sam();
-const samStatus = await sam.status('books');
-const samHistory = await sam.history('books', 5);
-const samResults = await sam.search('books', 'distributed systems', {
-  limit: 10
-});
-
-console.log(samStatus.getBody());
-console.log(samHistory.getBody());
-console.log(samResults.getBody());
 ```
 
-
-### Documents
-
-```javascript
-const documents = client.documents();
-
-await documents.add('books', {
-  id: 'book-1',
-  title: 'Designing Data-Intensive Applications',
-  content: 'Distributed systems, data models, replication, and indexing.'
-});
-
-await documents.update('books', 'book-1', { title: 'DDIA' });
-await documents.delete('books', 'book-1');
-
-await documents.import('books', [
-  { id: 'book-2', title: 'Database Internals', content: 'Storage engines and indexes.' }
-]);
-
-await documents.addCSV('reports', './files/metrics.csv', {
-  id: 'metrics_q1',
-  document: { source_type: 'csv' }
-});
-```
-
-`addCSV()` parses a local CSV file, flattens rows into text, and indexes the generated document. It does not require extra packages.
-
-### Search
+### Auth
 
 ```javascript
-const search = client.searchApi();
-
-await search.search('books', {
-  q: 'title:database OR content:index*',
-  query_by: 'title,content',
-  filter_by: 'category:technical',
-  sort_by: '_text_match:desc',
-  facet_by: 'category',
-  limit: 10,
-  offset: 0
+const client = new Client('http://localhost:9200', {
+  token: 'your_token_here',
+  auth_method: 'bearer'
 });
 
-await search.multiSearch([
-  { collection: 'books', q: 'database', query_by: 'title,content' },
-  { collection: 'articles', q: 'database', query_by: 'title,body' }
-]);
-
-await search.vectorSearch('books', {
-  vector_query: [0.12, 0.34, 0.56],
-  vector_by: 'embedding',
-  limit: 10
-});
+client.setAuthToken('your_token_here', 'bearer');
+client.setAuthToken('your_api_key_here', 'api-key');
 ```
 
 ### SAM
 
+SAM is separate from vector search. It performs term and intent-style lookup, not vector similarity search.
+
 ```javascript
 const sam = client.sam();
 
-const status = await sam.status('music');
-const history = await sam.history('music', 5);
-const results = await sam.search('music', 'queen of pop', {
+const status = await sam.status('books');
+const history = await sam.history('books', 5);
+const results = await sam.search('books', 'distributed systems', {
   limit: 10
 });
 
@@ -150,28 +92,35 @@ console.log(history.getBody());
 console.log(results.getBody());
 ```
 
-Common search parameters:
-
-- `q`: query string, including field clauses, phrases, boolean operators, and wildcards.
-- `query_by`: searchable fields as a string or array.
-- `filter_by`: filter expression.
-- `sort_by`: sort expression.
-- `facet_by`: facet fields.
-- `limit` / `offset`: pagination.
-- `page` / `per_page`: alternate pagination.
-
 ### SQL
 
-SQL queries are supported through the search API and through the interactive talk shell.
-
 ```javascript
-const response = await client.searchApi().sql(
-  'products',
-  'SELECT id, title, price FROM products ORDER BY price DESC LIMIT 5;'
+const sql = client.sql();
+
+const rows = await sql.query('SHOW COLLECTIONS;');
+const books = await sql.search(
+  'books',
+  'SELECT id, title FROM books ORDER BY title ASC LIMIT 3;'
 );
 
-const rows = response.getBody().rows || [];
-
-await client.sql('SHOW COLLECTIONS;');
-await client.execSql("INSERT INTO products (id, title) VALUES ('sku-9', 'Camp Stove');");
+console.log(rows.getBody());
+console.log(books.getBody());
 ```
+
+### Reduce Text Example
+
+Use the raw request helper for custom module routes:
+
+```javascript
+const response = await client.executeRequest('GET', '/modules/<name>/<route>', null, {
+  q: 'example query'
+});
+
+console.log(response.getBody());
+```
+
+### Notes
+
+- CSV support is built in.
+- Local PDF helpers and ranking helpers are available elsewhere in the client.
+- See `etc/api/node/examples/` for runnable examples.
