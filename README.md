@@ -29,9 +29,7 @@ It is a good fit for backend services, scripts, dashboards, and apps that want h
 
 ### Why choose it over raw HTTP?
 
-- Less repetitive fetch or axios boilerplate.
-- Cleaner handling for auth headers and endpoint paths.
-- Easier to keep search and indexing code readable.
+Choose the Node.js client over raw HTTP when you want less repetitive `fetch` or `axios` boilerplate, cleaner handling for auth headers and endpoint paths, and search or indexing code that stays easier to read.
 
 ### Install
 
