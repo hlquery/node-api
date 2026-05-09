@@ -34,7 +34,7 @@ Choose the Node.js client over raw HTTP when you want less repetitive `fetch` or
 ### Install
 
 ```bash
-npm install hlquery-node-client
+$ npm install hlquery-node-client
 ```
 
 For local development inside this repository:
