@@ -73,6 +73,21 @@ async function main() {
     const clientHealth = await client.health();
     assert.strictEqual(clientHealth.isSuccess(), true);
     assert.deepStrictEqual(clientHealth.getBody(), { status: 'ok' });
+
+    assert.strictEqual(typeof client.sql, 'function');
+    assert.strictEqual(typeof client.execSql, 'function');
+    assert.strictEqual(typeof client.sqlSearch, 'function');
+    assert.strictEqual(typeof client.sam().search, 'function');
+    assert.strictEqual(typeof client.sam().searchAll, 'function');
+    assert.strictEqual(typeof client.sam().rebuild, 'function');
+    assert.strictEqual(typeof client.sam().status, 'function');
+    assert.strictEqual(typeof client.sam().debug, 'function');
+    assert.strictEqual(typeof client.sam().history, 'function');
+    assert.strictEqual(typeof client.sam().pause, 'function');
+    assert.strictEqual(typeof client.sam().clearPause, 'function');
+    assert.strictEqual(typeof client.sam().listDocuments, 'function');
+    assert.strictEqual(typeof client.sam().getDocument, 'function');
+    assert.strictEqual(typeof client.sam().openDocument, 'function');
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
