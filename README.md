@@ -22,10 +22,9 @@ It is a good fit for backend services, scripts, dashboards, and apps that want h
 
 ### Why use it?
 
-- Familiar modular layout such as `client.collections()`, `client.documents()`, and `client.sam()`.
-- Consistent auth, params, and parsed responses.
-- Good default coverage for common hlquery workflows.
-- Raw request access for custom routes.
+Use the Node.js client when you want hlquery calls to read like regular application code. The client is organized around familiar modules such as `client.collections()`, `client.documents()`, and `client.sam()`, so collection management, document indexing, search, SQL, and SAM workflows stay easy to find.
+
+It also keeps the repetitive parts in one place: authentication, request parameters, endpoint paths, and parsed responses are handled consistently across the client. Common hlquery workflows are covered by default, while raw request access is still available when you need a custom route.
 
 ### Why choose it over raw HTTP?
 
@@ -72,6 +71,41 @@ client.setAuthToken('your_token_here', 'bearer');
 client.setAuthToken('your_api_key_here', 'api-key');
 ```
 
+### Operational routes
+
+The client includes wrappers for the common server and cluster routes used by dashboards, scripts, and maintenance jobs:
+
+```javascript
+const status = await client.status();
+const health = await client.health();
+const etc = await client.etc();
+
+const links = await client.links();
+const ping = await client.linksPing();
+const connect = await client.linksConnect('http://node-b:9200');
+const disconnect = await client.linksDisconnect('http://node-b:9200');
+
+const flush = await client.flush();
+```
+
+Routes that do not have a dedicated wrapper can still be called through `executeRequest()`:
+
+```javascript
+const response = await client.executeRequest('GET', '/modules/<name>/<route>', null, {
+  q: 'example query'
+});
+
+console.log(status.getBody());
+console.log(health.getBody());
+console.log(etc.getBody());
+console.log(links.getBody());
+console.log(ping.getBody());
+console.log(connect.getBody());
+console.log(disconnect.getBody());
+console.log(flush.getBody());
+console.log(response.getBody());
+```
+
 ### SAM
 
 SAM is separate from vector search. It performs term and intent-style lookup, not vector similarity search.
@@ -93,15 +127,17 @@ console.log(results.getBody());
 ### SQL
 
 ```javascript
-const sql = client.sql();
-
-const rows = await sql.query('SHOW COLLECTIONS;');
-const books = await sql.search(
+const rows = await client.sql('SHOW COLLECTIONS;');
+const execResult = await client.execSql(
+  "INSERT INTO logs_archive (id, title) VALUES ('row-1', 'warm cache');"
+);
+const books = await client.sqlSearch(
   'books',
   'SELECT id, title FROM books ORDER BY title ASC LIMIT 3;'
 );
 
 console.log(rows.getBody());
+console.log(execResult.getBody());
 console.log(books.getBody());
 ```
 

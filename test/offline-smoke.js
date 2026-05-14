@@ -36,6 +36,48 @@ async function main() {
       return;
     }
 
+    if (req.url === '/status') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ready' }));
+      return;
+    }
+
+    if (req.url === '/etc') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ protocol: 'http' }));
+      return;
+    }
+
+    if (req.url === '/links') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ links: [] }));
+      return;
+    }
+
+    if (req.url === '/links/ping') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    if (req.url === '/links/connect' && req.method === 'POST') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ connected: true }));
+      return;
+    }
+
+    if (req.url === '/links/disconnect' && req.method === 'POST') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ disconnected: true }));
+      return;
+    }
+
+    if (req.url === '/flush' && req.method === 'POST') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ flushed: true }));
+      return;
+    }
+
     if (req.url === '/echo-auth') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
@@ -74,6 +116,28 @@ async function main() {
     assert.strictEqual(clientHealth.isSuccess(), true);
     assert.deepStrictEqual(clientHealth.getBody(), { status: 'ok' });
 
+    const clientStatus = await client.status();
+    assert.deepStrictEqual(clientStatus.getBody(), { status: 'ready' });
+
+    const clientEtc = await client.etc();
+    assert.deepStrictEqual(clientEtc.getBody(), { protocol: 'http' });
+
+    const clientLinks = await client.links();
+    assert.deepStrictEqual(clientLinks.getBody(), { links: [] });
+
+    const clientLinksPing = await client.linksPing();
+    assert.deepStrictEqual(clientLinksPing.getBody(), { ok: true });
+
+    const clientLinksConnect = await client.linksConnect('http://node-b:9200');
+    assert.deepStrictEqual(clientLinksConnect.getBody(), { connected: true });
+
+    const clientLinksDisconnect = await client.linksDisconnect('http://node-b:9200');
+    assert.deepStrictEqual(clientLinksDisconnect.getBody(), { disconnected: true });
+
+    const clientFlush = await client.flush();
+    assert.deepStrictEqual(clientFlush.getBody(), { flushed: true });
+
+    assert.strictEqual(typeof client.executeRequest, 'function');
     assert.strictEqual(typeof client.sql, 'function');
     assert.strictEqual(typeof client.execSql, 'function');
     assert.strictEqual(typeof client.sqlSearch, 'function');
