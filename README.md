@@ -53,9 +53,11 @@ const client = new Client(process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_U
 });
 
 const health = await client.system().health();
+/* Print the HTTP status code from the health response. */
 console.log('status:', health.getStatusCode());
 
 const collections = await client.collections().list(0, 10);
+/* Print the collection list response body. */
 console.log(collections.getBody());
 ```
 
@@ -95,14 +97,23 @@ const response = await client.executeRequest('GET', '/modules/<name>/<route>', n
   q: 'example query'
 });
 
+/* Print the server status response body. */
 console.log(status.getBody());
+/* Print the health response body. */
 console.log(health.getBody());
+/* Print the runtime configuration response body. */
 console.log(etc.getBody());
+/* Print the configured cluster links response body. */
 console.log(links.getBody());
+/* Print the link ping response body. */
 console.log(ping.getBody());
+/* Print the link connect response body. */
 console.log(connect.getBody());
+/* Print the link disconnect response body. */
 console.log(disconnect.getBody());
+/* Print the flush response body. */
 console.log(flush.getBody());
+/* Print the custom route response body. */
 console.log(response.getBody());
 ```
 
@@ -119,8 +130,11 @@ const results = await sam.search('books', 'distributed systems', {
   limit: 10
 });
 
+/* Print the SAM status response body. */
 console.log(status.getBody());
+/* Print the SAM search history response body. */
 console.log(history.getBody());
+/* Print the SAM search results response body. */
 console.log(results.getBody());
 ```
 
@@ -136,8 +150,11 @@ const books = await client.sqlSearch(
   'SELECT id, title FROM books ORDER BY title ASC LIMIT 3;'
 );
 
+/* Print the SQL query response body. */
 console.log(rows.getBody());
+/* Print the SQL execution response body. */
 console.log(execResult.getBody());
+/* Print the collection SQL search response body. */
 console.log(books.getBody());
 ```
 
@@ -150,6 +167,7 @@ const response = await client.executeRequest('GET', '/modules/<name>/<route>', n
   q: 'example query'
 });
 
+/* Print the custom module route response body. */
 console.log(response.getBody());
 ```
 
