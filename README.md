@@ -16,7 +16,7 @@
 
 ### What is the hlquery Node.js API?
 
-The hlquery Node.js API is the official Node.js client for hlquery. It wraps the REST interface in a modular service-style client with helpers for collections, documents, search, SQL, and SAM.
+The hlquery Node.js API is the official Node.js client for [hlquery](https://github.com/hlquery/hlquery). It wraps the REST interface in a modular service-style client with helpers for collections, documents, search, SQL, and SAM.
 
 It is a good fit for backend services, scripts, dashboards, and apps that want hlquery integration without repeating request code.
 
