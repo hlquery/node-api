@@ -26,9 +26,6 @@ Use the Node.js client when you want hlquery calls to read like regular applicat
 
 It also keeps the repetitive parts in one place: authentication, request parameters, endpoint paths, and parsed responses are handled consistently across the client. Common hlquery workflows are covered by default, while raw request access is still available when you need a custom route.
 
-### Why choose it over raw HTTP?
-
-Choose the Node.js client over raw HTTP when you want less repetitive `fetch` or `axios` boilerplate, cleaner handling for auth headers and endpoint paths, and search or indexing code that stays easier to read.
 
 ### Install
 
