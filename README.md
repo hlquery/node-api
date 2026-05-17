@@ -9,7 +9,7 @@
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
 [![Node build](https://github.com/hlquery/node-api/actions/workflows/ci.yml/badge.svg)](https://github.com/hlquery/node-api/actions/workflows/ci.yml)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/node-api)](https://github.com/hlquery/node-api/pulse)
-[![GitHub](https://img.shields.io/badge/GitHub-node--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
+[![GitHub](https://img.shields.io/badge/GitHub-node--api-purple?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
 [![hlquery](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
