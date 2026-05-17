@@ -7,7 +7,7 @@
 **A modular Node.js client library for hlquery, designed with a familiar and intuitive API structure.**
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white)](https://x.com/hlquery)
-[![Node API CI](https://github.com/hlquery/node-api/actions/workflows/ci.yml/badge.svg)](https://github.com/hlquery/node-api/actions/workflows/ci.yml)
+[![Node API CI](https://img.shields.io/github/actions/workflow/status/hlquery/node-api/ci.yml?branch=main&label=Node%20API%20CI&color=purple)](https://github.com/hlquery/node-api/actions/workflows/ci.yml)
 [![Commit Activity](https://img.shields.io/github/commit-activity/m/hlquery/node-api)](https://github.com/hlquery/node-api/pulse)
 [![GitHub](https://img.shields.io/badge/GitHub-node--api-181717?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
 [![hlquery](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white)](https://github.com/hlquery/hlquery/stargazers)
