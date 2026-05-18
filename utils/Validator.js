@@ -69,35 +69,33 @@ class Validator {
      * Validate pagination parameters
      */
     static validatePagination(offset, limit) {
-        if (offset !== undefined && (typeof offset !== 'number' || offset < 0)) {
-            throw new ValidationException('Offset must be a non-negative number');
+        if (offset !== undefined && (!Number.isInteger(offset) || offset < 0)) {
+            throw new ValidationException('Offset must be a non-negative integer');
         }
-        if (limit !== undefined && (typeof limit !== 'number' || limit < 1)) {
-            throw new ValidationException('Limit must be a positive number');
+        if (limit !== undefined && (!Number.isInteger(limit) || limit < 1)) {
+            throw new ValidationException('Limit must be a positive integer');
         }
     }
     
     /**
      * Validate search parameters
      */
-    static validateSearchParams(params) {
-        if (params && typeof params !== 'object') {
+    static validateSearchParams(params = {}) {
+        if (params === null || typeof params !== 'object' || Array.isArray(params)) {
             throw new ValidationException('Search parameters must be an object');
         }
         
-        if (params) {
-            if (params.offset !== undefined && (typeof params.offset !== 'number' || params.offset < 0)) {
-                throw new ValidationException('Offset must be a non-negative number');
-            }
-            if (params.limit !== undefined && (typeof params.limit !== 'number' || params.limit < 1)) {
-                throw new ValidationException('Limit must be a positive number');
-            }
-            if (params.from !== undefined && (typeof params.from !== 'number' || params.from < 0)) {
-                throw new ValidationException('From must be a non-negative number');
-            }
-            if (params.size !== undefined && (typeof params.size !== 'number' || params.size < 1)) {
-                throw new ValidationException('Size must be a positive number');
-            }
+        if (params.offset !== undefined && (!Number.isInteger(params.offset) || params.offset < 0)) {
+            throw new ValidationException('Offset must be a non-negative integer');
+        }
+        if (params.limit !== undefined && (!Number.isInteger(params.limit) || params.limit < 1)) {
+            throw new ValidationException('Limit must be a positive integer');
+        }
+        if (params.from !== undefined && (!Number.isInteger(params.from) || params.from < 0)) {
+            throw new ValidationException('From must be a non-negative integer');
+        }
+        if (params.size !== undefined && (!Number.isInteger(params.size) || params.size < 1)) {
+            throw new ValidationException('Size must be a positive integer');
         }
     }
     
@@ -120,7 +118,7 @@ class Validator {
             // Check string values for commas
             if (typeof value === 'string' && value.includes(',')) {
                 throw new ValidationException(
-                    `Field '${key}' contains invalid character: comma (`,`). ` +
+                    `Field '${key}' contains invalid character: comma (,). ` +
                     `Commas are not allowed in field values. Use underscores (_) or spaces instead, or use arrays for multiple values.`
                 );
             }
@@ -130,7 +128,7 @@ class Validator {
                 for (const item of value) {
                     if (typeof item === 'string' && item.includes(',')) {
                         throw new ValidationException(
-                            `Field '${key}' contains invalid character: comma (`,`). ` +
+                            `Field '${key}' contains invalid character: comma (,). ` +
                             `Array items cannot contain commas. Use underscores (_) or spaces instead.`
                         );
                     }

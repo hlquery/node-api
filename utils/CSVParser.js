@@ -14,6 +14,7 @@ const { ValidationException } = require('../lib/Exceptions');
 class CSVParser {
     static parseFile(filePath, options = {}) {
         this.validateFilePath(filePath);
+        this.validateDelimiter(options.delimiter || ',');
 
         const resolvedPath = path.resolve(filePath);
         const stat = fs.statSync(resolvedPath);
@@ -62,6 +63,8 @@ class CSVParser {
     }
 
     static parseCSV(input, delimiter) {
+        this.validateDelimiter(delimiter);
+
         const rows = [];
         let row = [];
         let value = '';
@@ -153,6 +156,16 @@ class CSVParser {
     static validateFilePath(filePath) {
         if (!filePath || typeof filePath !== 'string') {
             throw new ValidationException('CSV file path must be a non-empty string');
+        }
+    }
+
+    static validateDelimiter(delimiter) {
+        if (typeof delimiter !== 'string' || delimiter.length !== 1) {
+            throw new ValidationException('CSV delimiter must be a single character');
+        }
+
+        if (delimiter === '"' || delimiter === '\r' || delimiter === '\n') {
+            throw new ValidationException('CSV delimiter cannot be a quote or newline');
         }
     }
 }
