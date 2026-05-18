@@ -8,7 +8,7 @@
 
 [![Follow hlquery](https://img.shields.io/badge/Follow-%40hlquery-blue?logo=x&logoColor=white&labelColor=000000)](https://x.com/hlquery)
 [![Node build](https://github.com/hlquery/node-api/actions/workflows/ci.yml/badge.svg)](https://github.com/hlquery/node-api/actions/workflows/ci.yml)
-[![node-api](https://img.shields.io/badge/GitHub-node--api-purple?logo=github&logoColor=white)](https://github.com/hlquery/node-api/stargazers)
+[![node-api](https://img.shields.io/badge/GitHub-node--api-purple?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/node-api/stargazers)
 [![hlquery](https://img.shields.io/badge/GitHub-hlquery-blue?logo=github&logoColor=white&labelColor=000000)](https://github.com/hlquery/hlquery/stargazers)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-a35a0f?logo=open-source-initiative&logoColor=white&labelColor=000000)](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -25,10 +25,6 @@ It is a good fit for backend services, scripts, dashboards, and apps that want h
 Use the Node.js client when you want hlquery calls to read like regular application code. The client is organized around familiar modules such as `client.collections()`, `client.documents()`, and `client.sam()`, so collection management, document indexing, search, SQL, and SAM workflows stay easy to find.
 
 It also keeps the repetitive parts in one place: authentication, request parameters, endpoint paths, and parsed responses are handled consistently across the client. Common hlquery workflows are covered by default, while raw request access is still available when you need a custom route.
-
-### Why choose it over raw HTTP?
-
-Choose the Node.js client over raw HTTP when you want less repetitive `fetch` or `axios` boilerplate, cleaner handling for auth headers and endpoint paths, and search or indexing code that stays easier to read.
 
 ### Install
 
