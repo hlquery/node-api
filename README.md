@@ -139,7 +139,7 @@ console.log(results.getBody());
 ```javascript
 const rows = await client.sql('SHOW COLLECTIONS;');
 const execResult = await client.execSql(
-  "INSERT INTO logs_archive (id, title) VALUES ('row-1', 'warm cache');"
+  "INSERT INTO books (id, title) VALUES ('book_4', 'Inserted via SQL');"
 );
 const books = await client.sqlSearch(
   'books',

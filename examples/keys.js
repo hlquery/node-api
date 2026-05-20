@@ -6,13 +6,15 @@
 
 const Client = require('../index');
 
-// Replace with your hlquery master admin token
-const ADMIN_TOKEN = 'your_admin_token_here';
-const BASE_URL = 'http://localhost:9200';
+const ADMIN_TOKEN = process.argv[2] || process.env.HLQUERY_ADMIN_TOKEN || process.env.HLQUERY_TOKEN || null;
+const BASE_URL = process.argv[3] || process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200';
 
 async function run() {
     try {
         const client = new Client(BASE_URL);
+        if (!ADMIN_TOKEN) {
+            throw new Error('Admin token required. Pass it as argv[2] or set HLQUERY_ADMIN_TOKEN.');
+        }
         client.setAuthToken(ADMIN_TOKEN);
 
         console.log('1. Creating a scoped search key for "products" collection...');

@@ -7,8 +7,15 @@
 const Client = require('../lib/Client');
 
 async function main() {
+    const baseUrl = process.argv[2] || process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200';
+    const token = process.argv[3] || process.env.HLQUERY_TOKEN || null;
+
     // Initialize client
-    const client = new Client('http://localhost:9200');
+    const client = new Client(baseUrl);
+
+    if (token) {
+        client.setAuthToken(token, 'bearer');
+    }
     
     // Health check
     const health = await client.health();
@@ -22,14 +29,7 @@ async function main() {
         console.log(`Found ${body.collections ? body.collections.length : 0} collections`);
     }
     
-    // With authentication
-    const authenticatedClient = new Client('http://localhost:9200', {
-        token: 'your_token_here',
-        auth_method: 'bearer'
-    });
-    
-    // Or set token dynamically
-    client.setAuthToken('your_token_here', 'bearer');
+    console.log('Base URL:', baseUrl);
 }
 
 main().catch(console.error);

@@ -161,11 +161,6 @@ async function main() {
     // Create client
     const client = new Client(baseUrl);
     
-    // Optional: Set authentication token if provided
-    // Uncomment and set token if your server requires authentication:
-    // const authToken = 'your_token_here';
-    // client.setAuthToken(authToken, 'bearer');
-    
     if (testToken) {
         client.setAuthToken(testToken, 'bearer');
         console.log(`Using authentication token: ${testToken.substring(0, 8)}...\n`);

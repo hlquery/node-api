@@ -12,7 +12,13 @@
 const Client = require('../lib/Client');
 
 async function main() {
-    const client = new Client('http://localhost:9200');
+    const baseUrl = process.argv[2] || process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_URL || 'http://localhost:9200';
+    const token = process.argv[3] || process.env.HLQUERY_TOKEN || null;
+    const client = new Client(baseUrl);
+
+    if (token) {
+        client.setAuthToken(token, 'bearer');
+    }
 
     console.log('='.repeat(70));
     console.log('FLUSH EXAMPLE');
