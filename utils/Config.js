@@ -23,6 +23,14 @@ class Config {
             timeout: options.timeout || 30000,
             token: options.token || null,
             auth_method: options.auth_method || 'bearer',
+            agent: options.agent || null,
+            http_agent: options.http_agent || null,
+            https_agent: options.https_agent || null,
+            headers: options.headers || {},
+            max_response_bytes: options.max_response_bytes || 0,
+            throw_on_error: options.throw_on_error || false,
+            query_array_format: options.query_array_format || 'comma',
+            signal: options.signal || null,
             ...options
         };
     }
@@ -34,11 +42,17 @@ class Config {
         if (!url) {
             return Config.getDefaultBaseUrl();
         }
+        if (url instanceof URL) {
+            url = url.toString();
+        }
+        if (typeof url !== 'string') {
+            url = String(url);
+        }
         url = url.trim();
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'http://' + url;
         }
-        return url.replace(/\/$/, '');
+        return url.replace(/\/+$/, '');
     }
     
     /**
@@ -47,7 +61,8 @@ class Config {
     static isValidUrl(url) {
         try {
             const urlObj = new URL(url);
-            return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+            return (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') &&
+                Boolean(urlObj.hostname);
         } catch (e) {
             return false;
         }

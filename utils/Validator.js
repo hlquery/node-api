@@ -56,12 +56,12 @@ class Validator {
             throw new ValidationException('Document ID must be between 1 and 64 characters');
         }
         
-        // Document IDs should be URL-safe: alphanumeric, underscores, and hyphens only
-        if (!/^[a-zA-Z0-9_-]+$/.test(idStr)) {
-            throw new ValidationException(
-                'Document ID contains invalid characters. ' +
-                'Use only letters, numbers, underscores, and hyphens'
-            );
+        if (idStr.trim() === '') {
+            throw new ValidationException('Document ID must be a non-empty string or number');
+        }
+
+        if (/[\x00-\x1F\x7F]/.test(idStr)) {
+            throw new ValidationException('Document ID contains control characters');
         }
     }
     
@@ -100,8 +100,7 @@ class Validator {
     }
     
     /**
-     * Validate document field values for invalid characters
-     * Commas are not allowed in string field values as they're reserved for internal parsing
+     * Validate document field values.
      * 
      * @param {object} document - Document object to validate
      * @throws {ValidationException} If document contains invalid characters
@@ -111,28 +110,12 @@ class Validator {
             return; // Skip validation for non-objects or arrays (will be validated per-item)
         }
         
-        for (const [key, value] of Object.entries(document)) {
-            // Skip the 'id' field as it has its own validation
-            if (key === 'id') continue;
-            
-            // Check string values for commas
-            if (typeof value === 'string' && value.includes(',')) {
-                throw new ValidationException(
-                    `Field '${key}' contains invalid character: comma (,). ` +
-                    `Commas are not allowed in field values. Use underscores (_) or spaces instead, or use arrays for multiple values.`
-                );
+        for (const key of Object.keys(document)) {
+            if (key === '') {
+                throw new ValidationException('Document field names must be non-empty strings');
             }
-            
-            // Check array values - ensure they don't contain strings with commas
-            if (Array.isArray(value)) {
-                for (const item of value) {
-                    if (typeof item === 'string' && item.includes(',')) {
-                        throw new ValidationException(
-                            `Field '${key}' contains invalid character: comma (,). ` +
-                            `Array items cannot contain commas. Use underscores (_) or spaces instead.`
-                        );
-                    }
-                }
+            if (/[\x00-\x1F\x7F]/.test(key)) {
+                throw new ValidationException(`Field '${key}' contains control characters`);
             }
         }
     }
