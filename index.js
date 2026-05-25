@@ -25,6 +25,8 @@ module.exports.Synonyms = require('./lib/Synonyms');
 module.exports.Stopwords = require('./lib/Stopwords');
 module.exports.System = require('./lib/System');
 module.exports.SAM = require('./lib/SAM');
+module.exports.Modules = require('./lib/Modules');
+module.exports.Route = require('./lib/Route');
 
 // Export exceptions
 module.exports.Exceptions = require('./lib/Exceptions');

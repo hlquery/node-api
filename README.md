@@ -22,7 +22,7 @@ It is a good fit for backend services, scripts, dashboards, and apps that want h
 
 ### Why use it?
 
-Use the Node.js client when you want hlquery calls to read like regular application code. The client is organized around familiar modules such as `client.collections()`, `client.documents()`, and `client.sam()`, so collection management, document indexing, search, SQL, and SAM workflows stay easy to find.
+Use the Node.js client when you want hlquery calls to read like regular application code. The client is organized around familiar modules such as `client.collections()`, `client.documents()`, and `client.sam()`, with Redis-style dynamic route helpers for module APIs and custom endpoints.
 
 It also keeps the repetitive parts in one place: authentication, request parameters, endpoint paths, and parsed responses are handled consistently across the client. Common hlquery workflows are covered by default, while raw request access is still available when you need a custom route.
 
@@ -49,12 +49,14 @@ const client = new Client(process.env.HLQ_BASE_URL || process.env.HLQUERY_BASE_U
 });
 
 const health = await client.system().health();
+
 /* Print the HTTP status code from the health response. */
 console.log('status:', health.getStatusCode());
 
 const collections = await client.collections().list(0, 10);
+
 /* Print the collection list response body. */
-console.log(collections.getBody());
+console.log(collections.body);
 ```
 
 ### Auth
@@ -93,24 +95,31 @@ const response = await client.executeRequest('GET', '/modules/<name>/<route>', n
   q: 'example query'
 });
 
-/* Print the server status response body. */
-console.log(status.getBody());
-/* Print the health response body. */
-console.log(health.getBody());
-/* Print the runtime configuration response body. */
-console.log(etc.getBody());
-/* Print the configured cluster links response body. */
-console.log(links.getBody());
-/* Print the link ping response body. */
-console.log(ping.getBody());
-/* Print the link connect response body. */
-console.log(connect.getBody());
-/* Print the link disconnect response body. */
-console.log(disconnect.getBody());
-/* Print the flush response body. */
-console.log(flush.getBody());
-/* Print the custom route response body. */
-console.log(response.getBody());
+console.log(response.body);
+```
+
+For module routes and custom endpoints, the client also supports a Redis-style fluent API:
+
+```javascript
+const result = await client.module('<name>').route('<route>').get({
+  q: 'example query'
+});
+
+console.log(result.body);
+
+const indexed = await client.module('<name>').route('index').post({
+  id: 'doc_1',
+  title: 'Example'
+});
+
+const modules = await client.modules().list();
+const syntax = await client.modules().syntax('<name>');
+const raw = await client.route('etc').get();
+
+console.log(indexed.body);
+console.log(modules.body);
+console.log(syntax.body);
+console.log(raw.body);
 ```
 
 ### SAM
@@ -127,11 +136,11 @@ const results = await sam.search('books', 'distributed systems', {
 });
 
 /* Print the SAM status response body. */
-console.log(status.getBody());
+console.log(status.body);
 /* Print the SAM search history response body. */
-console.log(history.getBody());
+console.log(history.body);
 /* Print the SAM search results response body. */
-console.log(results.getBody());
+console.log(results.body);
 ```
 
 ### SQL
@@ -147,11 +156,11 @@ const books = await client.sqlSearch(
 );
 
 /* Print the SQL query response body. */
-console.log(rows.getBody());
+console.log(rows.body);
 /* Print the SQL execution response body. */
-console.log(execResult.getBody());
+console.log(execResult.body);
 /* Print the collection SQL search response body. */
-console.log(books.getBody());
+console.log(books.body);
 ```
 
 ### Contributing

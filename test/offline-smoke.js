@@ -67,6 +67,36 @@ async function main() {
       return;
     }
 
+    if (req.url === '/modules') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ modules: ['demo'] }));
+      return;
+    }
+
+    if (req.url === '/modules/demo/syntax') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ name: 'demo', syntax: 'demo <q>' }));
+      return;
+    }
+
+    if (req.url.startsWith('/modules/demo/search') && req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ module: 'demo', route: 'search', url: req.url }));
+      return;
+    }
+
+    if (req.url === '/modules/demo/index' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ indexed: JSON.parse(body) }));
+      });
+      return;
+    }
+
     if (req.url === '/links') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ links: [] }));
@@ -217,6 +247,32 @@ async function main() {
 
     const clientEtc = await client.etc();
     assert.deepStrictEqual(clientEtc.getBody(), { protocol: 'http' });
+
+    const routeEtc = await client.route('etc').get();
+    assert.deepStrictEqual(routeEtc.body, { protocol: 'http' });
+
+    const modulesList = await client.modules().list();
+    assert.deepStrictEqual(modulesList.body, { modules: ['demo'] });
+
+    const moduleSyntax = await client.modules().syntax('demo');
+    assert.deepStrictEqual(moduleSyntax.body, { name: 'demo', syntax: 'demo <q>' });
+
+    const moduleSearch = await client.module('demo').route('search').get({
+      q: 'example query'
+    });
+    assert.strictEqual(moduleSearch.body.module, 'demo');
+    assert.strictEqual(moduleSearch.body.route, 'search');
+    assert.match(moduleSearch.body.url, /q=example\+query|q=example%20query/);
+
+    const modulePost = await client.module('demo').route('index').post({
+      id: 'doc_1'
+    });
+    assert.deepStrictEqual(modulePost.body.indexed, { id: 'doc_1' });
+
+    const moduleCall = await client.modules().call('demo', 'search', 'GET', null, {
+      q: 'from call'
+    });
+    assert.match(moduleCall.body.url, /q=from\+call|q=from%20call/);
 
     const clientLinks = await client.links();
     assert.deepStrictEqual(clientLinks.getBody(), { links: [] });
