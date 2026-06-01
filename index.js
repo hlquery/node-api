@@ -26,6 +26,8 @@ module.exports.Stopwords = require('./lib/Stopwords');
 module.exports.System = require('./lib/System');
 module.exports.SAM = require('./lib/SAM');
 module.exports.Modules = require('./lib/Modules');
+module.exports.Users = require('./lib/Users');
+module.exports.Analytics = require('./lib/Analytics');
 module.exports.Route = require('./lib/Route');
 
 // Export exceptions

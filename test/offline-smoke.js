@@ -6,9 +6,16 @@ const http = require('http');
 const Hlquery = require('..');
 const Client = require('../lib/Client');
 const Collections = require('../lib/Collections');
+const Documents = require('../lib/Documents');
+const Aliases = require('../lib/Aliases');
 const Request = require('../lib/Request');
 const Response = require('../lib/Response');
+const SAM = require('../lib/SAM');
 const Search = require('../lib/Search');
+const System = require('../lib/System');
+const Modules = require('../lib/Modules');
+const Users = require('../lib/Users');
+const Analytics = require('../lib/Analytics');
 const Config = require('../utils/Config');
 const Validator = require('../utils/Validator');
 const CSVParser = require('../utils/CSVParser');
@@ -301,9 +308,14 @@ async function main() {
     assert.strictEqual(typeof client.sam().history, 'function');
     assert.strictEqual(typeof client.sam().pause, 'function');
     assert.strictEqual(typeof client.sam().clearPause, 'function');
+    assert.strictEqual(typeof client.sam().improve, 'function');
+    assert.strictEqual(typeof client.sam().flushActorMetadata, 'function');
     assert.strictEqual(typeof client.sam().listDocuments, 'function');
     assert.strictEqual(typeof client.sam().getDocument, 'function');
     assert.strictEqual(typeof client.sam().openDocument, 'function');
+    assert.strictEqual(typeof client.sam().addDocumentLabel, 'function');
+    assert.strictEqual(typeof client.users().list, 'function');
+    assert.strictEqual(typeof client.analytics().click, 'function');
     await assert.rejects(() => client.sam().history(null, 0), /positive integer/);
     await assert.rejects(() => client.sam().listDocuments('books', NaN, 20), /non-negative integer/);
 
@@ -339,6 +351,76 @@ async function main() {
     });
     const fields = await fieldsApi.getFields('books');
     assert.deepStrictEqual(fields.getBody().fields.map(field => field.name), ['title', 'body', 'author']);
+
+    const capturedRequests = [];
+    const captureRequest = {
+      async execute(method, path, body = null, queryParams = {}) {
+        capturedRequests.push({ method, path, body, queryParams });
+        return new Response(200, { ok: true });
+      }
+    };
+    const capturedCollections = new Collections(captureRequest);
+    const capturedDocuments = new Documents(captureRequest);
+    const capturedAliases = new Aliases(captureRequest);
+    const capturedSam = new SAM(captureRequest);
+    const capturedSystem = new System(captureRequest);
+    const capturedModules = new Modules(captureRequest);
+    const capturedUsers = new Users(captureRequest);
+    const capturedAnalytics = new Analytics(captureRequest);
+
+    await capturedCollections.language('books');
+    await capturedAliases.listCollection('books');
+    await capturedDocuments.context('books', 'doc/one');
+    await capturedDocuments.maybe('books', { q: 'bok' });
+    await capturedDocuments.updateByQuery('books', { filter_by: 'author:alice', update: { featured: true } });
+    await capturedDocuments.deleteByQuery('books', { filter_by: 'author:alice' });
+    await capturedSam.improve({ limit: 2, force: true });
+    await capturedSam.flushActorMetadata();
+    await capturedSam.addDocumentLabel('books', 'doc/one', ['featured']);
+    await capturedUsers.list();
+    await capturedUsers.get('alice smith');
+    await capturedUsers.create({ name: 'alice smith', flags: ['user'] });
+    await capturedUsers.update('alice smith', { description: 'Updated' });
+    await capturedUsers.delete('alice smith');
+    await capturedAnalytics.click({ collection: 'books', doc_id: 'doc/one', query: 'book', rank: 1 });
+    await capturedSystem.ready();
+    await capturedSystem.metricsHistory();
+    await capturedSystem.metricsHistoryAlias();
+    await capturedSystem.searchConfig();
+    await capturedSystem.llm();
+    await capturedSystem.updateCounters({ prefix: 'bench_' });
+    await capturedSystem.debugCounters();
+    await capturedSystem.repair({ collection: 'books', rebuild_index: true });
+    await capturedModules.load('demo');
+    await capturedModules.unload('demo');
+
+    assert.deepStrictEqual(capturedRequests, [
+      { method: 'GET', path: '/collections/books/lang', body: null, queryParams: {} },
+      { method: 'GET', path: '/collections/books/aliases', body: null, queryParams: {} },
+      { method: 'GET', path: '/collections/books/documents/doc%2Fone/context', body: null, queryParams: {} },
+      { method: 'GET', path: '/collections/books/documents/maybe', body: null, queryParams: { q: 'bok' } },
+      { method: 'POST', path: '/collections/books/documents/_update_by_query', body: { filter_by: 'author:alice', update: { featured: true } }, queryParams: {} },
+      { method: 'POST', path: '/collections/books/documents/_delete_by_query', body: { filter_by: 'author:alice' }, queryParams: {} },
+      { method: 'POST', path: '/sam/improve', body: null, queryParams: { limit: 2, force: true } },
+      { method: 'POST', path: '/sam/flush_actor_metadata', body: null, queryParams: {} },
+      { method: 'POST', path: '/sam/label/add/books/doc%2Fone', body: { labels: ['featured'] }, queryParams: {} },
+      { method: 'GET', path: '/users', body: null, queryParams: {} },
+      { method: 'GET', path: '/users/alice%20smith', body: null, queryParams: {} },
+      { method: 'POST', path: '/users', body: { name: 'alice smith', flags: ['user'] }, queryParams: {} },
+      { method: 'PUT', path: '/users/alice%20smith', body: { description: 'Updated' }, queryParams: {} },
+      { method: 'DELETE', path: '/users/alice%20smith', body: null, queryParams: {} },
+      { method: 'POST', path: '/analytics/click', body: { collection: 'books', doc_id: 'doc/one', query: 'book', rank: 1 }, queryParams: {} },
+      { method: 'GET', path: '/ready', body: null, queryParams: {} },
+      { method: 'GET', path: '/metrics/history', body: null, queryParams: {} },
+      { method: 'GET', path: '/metrics-history', body: null, queryParams: {} },
+      { method: 'GET', path: '/search-config', body: null, queryParams: {} },
+      { method: 'GET', path: '/llm', body: null, queryParams: {} },
+      { method: 'POST', path: '/update-counters', body: null, queryParams: { prefix: 'bench_' } },
+      { method: 'GET', path: '/debug/counters', body: null, queryParams: {} },
+      { method: 'POST', path: '/repair', body: null, queryParams: { collection: 'books', rebuild_index: true } },
+      { method: 'POST', path: '/loadmodule/demo', body: null, queryParams: {} },
+      { method: 'POST', path: '/unloadmodule/demo', body: null, queryParams: {} }
+    ]);
 
     let collectionFetches = 0;
     const searchApi = new Search({
