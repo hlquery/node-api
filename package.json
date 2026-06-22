@@ -4,7 +4,8 @@
   "description": "Node.js client for hlquery",
   "main": "lib/Client.js",
   "scripts": {
-    "test:offline": "node -e \"const Client = require('./'); if (typeof Client !== 'function') process.exit(1); console.log('offline smoke OK')\""
+    "test": "node test/route-conformance.test.js",
+    "test:offline": "npm test"
   },
   "keywords": [
     "hlquery",
