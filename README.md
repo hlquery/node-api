@@ -88,6 +88,16 @@ const disconnect = await client.linksDisconnect('http://node-b:9200');
 const flush = await client.flush();
 ```
 
+Maintenance actions default to `POST`, and can explicitly use either server-supported method:
+
+```javascript
+await client.updateCounters({ force: true });
+await client.updateCounters({ force: true }, 'GET');
+await client.repair({}, 'POST');
+```
+
+The client also wraps readiness, startup, metrics, connection, storage, integrity, counter, user, key, module, and analytics routes through `client.system()`, `client.users()`, `client.keys()`, `client.modules()`, and `client.analytics()`.
+
 Routes that do not have a dedicated wrapper can still be called through `executeRequest()`:
 
 ```javascript
@@ -120,6 +130,45 @@ console.log(indexed.body);
 console.log(modules.body);
 console.log(syntax.body);
 console.log(raw.body);
+```
+
+### Collections, documents, and search
+
+```javascript
+const metadata = await client.collections().get('products');
+const language = await client.collections().language('products');
+
+// getFields() is a compatibility alias for collection metadata. The server has
+// no /collections/{name}/fields route.
+const metadataAgain = await client.collections().getFields('products');
+
+const context = await client.documents().context('products', 'prod_1');
+const facets = await client.documents().facetCounts('products', { facet_by: 'brand' });
+const exported = await client.documents().export('products', { filter_by: 'active:true' });
+const suggestions = await client.documents().maybe('products', { q: 'keybaord' });
+
+await client.documents().updateByQuery('products', {
+  filter_by: 'active:false',
+  set: { archived: true }
+});
+await client.documents().deleteByQuery('products', { filter_by: 'expired:true' });
+
+const searches = [{ collection: 'products', q: 'keyboard', query_by: 'title' }];
+await client.searchApi().multiSearch(searches);        // POST (default)
+await client.searchApi().multiSearch(searches, 'GET');
+await client.globalSearch({ collection: 'products', q: 'keyboard' });
+```
+
+Synonyms, overrides, and aliases expose separate `create()` (`POST`) and `update()` (`PUT`) helpers; `upsert()` uses the client's default upsert verb. Stopwords use their collection or global create/delete routes.
+
+### Request safety and errors
+
+`executeRequest()` accepts a relative path on the configured hlquery origin. Absolute cross-origin URLs are rejected with `RequestException` code `CROSS_ORIGIN_REQUEST`; this prevents credentials from being forwarded to another host. HTTP error bodies retain the server's `error`, optional `message`, numeric `code`, and stable `code_text` fields.
+
+Run the offline route-contract suite with:
+
+```bash
+npm test
 ```
 
 ### SQL
