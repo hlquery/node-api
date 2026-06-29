@@ -197,17 +197,19 @@ We welcome contributions from the community! All contributions must be released 
 
 ### How to Contribute
 
-- Check existing [issues](https://github.com/hlquery/hlquery/issues) or create new ones
-- Contribute to client libraries (Node.js, Go, Java, Python, PHP, Ruby, Rust, Perl, C++)
-- Test and report bugs
-- Improve documentation
+- Check existing [Node.js API issues](https://github.com/hlquery/node-api/issues) or create new ones
+- Contribute Node.js client changes to [hlquery/node-api](https://github.com/hlquery/node-api)
+- Contribute shared server/API changes to [hlquery/hlquery](https://github.com/hlquery/hlquery)
+- Test and report bugs against the Node.js client
+- Improve Node.js-specific documentation and examples
 
 ### Community
 
-- 📖 [Documentation](https://docs.hlquery.com)
-- 🐦 [X (Twitter)](https://x.com/hlquery)
-- 📦 [GitHub](https://github.com/hlquery/hlquery)
+- [Documentation](https://docs.hlquery.com)
+- [X (Twitter)](https://x.com/hlquery)
+- [Node.js API GitHub](https://github.com/hlquery/node-api)
+- [hlquery GitHub](https://github.com/hlquery/hlquery)
 
 ### License
 
-hlquery is licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
+The hlquery Node.js API is licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
