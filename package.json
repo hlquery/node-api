@@ -1,6 +1,6 @@
 {
   "name": "hlquery-node-client",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Node.js client for hlquery",
   "main": "lib/Client.js",
   "scripts": {
