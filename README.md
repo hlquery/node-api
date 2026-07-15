@@ -205,10 +205,10 @@ We welcome contributions from the community! All contributions must be released 
 
 ### Community
 
-- [Documentation](https://docs.hlquery.com)
-- [X (Twitter)](https://x.com/hlquery)
-- [Node.js API GitHub](https://github.com/hlquery/node-api)
-- [hlquery GitHub](https://github.com/hlquery/hlquery)
+- 📖 [Documentation](https://docs.hlquery.com)
+- 🐦 [X (Twitter)](https://x.com/hlquery)
+- 🟢 [Node.js API GitHub](https://github.com/hlquery/node-api)
+- 📦 [hlquery GitHub](https://github.com/hlquery/hlquery)
 
 ### License
 
