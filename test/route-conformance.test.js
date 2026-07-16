@@ -4,6 +4,7 @@ const assert = require('assert');
 const Request = require('../lib/Request');
 const Search = require('../lib/Search');
 const System = require('../lib/System');
+const Presets = require('../lib/Presets');
 const { NODE_CLIENT_ROUTE_COVERAGE } = require('../lib/conformance');
 
 class RecordingRequest {
@@ -41,6 +42,7 @@ async function main() {
     const recorder = new RecordingRequest();
     const search = new Search(recorder, null);
     const system = new System(recorder);
+    const presets = new Presets(recorder);
 
     assert.deepStrictEqual(route('/multi_search').methods, ['GET', 'POST']);
     await search.multiSearch([], 'GET');
@@ -49,6 +51,18 @@ async function main() {
     });
     await search.multiSearch([], 'POST');
     assert.strictEqual(recorder.last().method, 'POST');
+
+    assert.deepStrictEqual(route('/search').methods, ['GET', 'POST']);
+    await search.searchAll({ q: 'research', collections: 'universities,science', limit: 20 });
+    assert.deepStrictEqual(recorder.last(), {
+        method: 'GET',
+        path: '/search',
+        body: null,
+        query: { q: 'research', collections: 'universities,science', limit: 20 }
+    });
+    await search.searchAll({ body: { q: 'research', collections: ['universities', 'science'] } });
+    assert.strictEqual(recorder.last().method, 'POST');
+    assert.strictEqual(recorder.last().path, '/search');
 
     for (const [path, invoke] of [
         ['/update-counters', method => system.updateCounters({ force: 1 }, method)],
@@ -61,6 +75,20 @@ async function main() {
         await invoke('POST');
         assert.strictEqual(recorder.last().method, 'POST');
     }
+
+    await system.configFiles();
+    assert.strictEqual(recorder.last().path, '/config-files');
+    await system.cache();
+    assert.strictEqual(recorder.last().path, '/cache');
+
+    await presets.list();
+    assert.deepStrictEqual(recorder.last(), {
+        method: 'GET', path: '/presets', body: null, query: {}
+    });
+    await presets.update('daily/research', { query_by: 'title' });
+    assert.strictEqual(recorder.last().method, 'PUT');
+    assert.strictEqual(recorder.last().path, '/presets/daily%2Fresearch');
+    await assert.rejects(presets.get('  '), /non-empty string/);
 
     const request = new Request('https://search.example.test', {
         token: 'secret-token'

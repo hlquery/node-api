@@ -96,7 +96,16 @@ await client.updateCounters({ force: true }, 'GET');
 await client.repair({}, 'POST');
 ```
 
-The client also wraps readiness, startup, metrics, connection, storage, integrity, counter, user, key, module, and analytics routes through `client.system()`, `client.users()`, `client.keys()`, `client.modules()`, and `client.analytics()`.
+The client also wraps readiness, startup, metrics, cache, active configuration files, connection, storage, integrity, counter, user, key, module, analytics, and search-preset routes through `client.system()`, `client.users()`, `client.keys()`, `client.modules()`, `client.analytics()`, and `client.presets()`.
+
+```javascript
+await client.presets().update('catalog-default', {
+  q: '*',
+  query_by: 'title,description',
+  limit: 20
+});
+const preset = await client.presets().get('catalog-default');
+```
 
 Routes that do not have a dedicated wrapper can still be called through `executeRequest()`:
 
@@ -202,6 +211,15 @@ We welcome contributions from the community! All contributions must be released 
 - Contribute shared server/API changes to [hlquery/hlquery](https://github.com/hlquery/hlquery)
 - Test and report bugs against the Node.js client
 - Improve Node.js-specific documentation and examples
+
+### Search all collections
+
+```javascript
+const result = await client.searchAll({ q: 'research', limit: 20 });
+const selected = await client.searchAll({ q: 'research', collections: 'universities,science' });
+```
+
+`globalSearch` remains available as an equivalent name. Results are globally merged and each hit includes `document._collection`.
 
 ### Community
 
